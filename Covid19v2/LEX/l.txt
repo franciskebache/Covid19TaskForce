@@ -1,0 +1,252 @@
+Write a Lex program to count the number of words in a source program.
+
+%option noyywrap
+%{
+        #include<stdio.h>
+        int i=0;
+%}
+
+%%
+([a-zA-Z0-9])* {i++;}
+\n {printf("Total number of words in a source program is %d",i); i=0;}
+%%
+
+int main()
+{
+        printf("Enter Sentence: ");
+        yylex();
+        return 0;
+}
+
+
+Write a Lex program to show the vowels and consonants of a token
+
+%option noyywrap
+%{
+        #include<stdio.h>
+        int V=0, C=0;
+%}
+
+%%
+[AEOIUaeiou] {V++;}
+[^AEOIUaeiou\n] {C++;}
+\n {printf("Vowels = %d \nConsanants = %d",V,C);}
+%%
+
+int main()
+{
+        printf("Enter string: ");
+        yylex();
+        return 0;
+}
+
+Write a Lex program to identify tokens.
+
+%option noyywrap
+%{
+        #include<stdio.h>
+%}
+
+%%
+"while"|"if"|"else"|"elseif"|"do"|"int"|"float" {printf("\n%s is Keywords\n",yytext);}
+"<="|"="|"=>"|"+"|"-"|"/"|"*" {printf("\n%s is Operators\n",yytext);}
+[a-zA-Z]* {printf("\n%s is Identifiers\n",yytext);}
+[0-9]+ {printf("\n%s is Numbers\n",yytext);}
+[{}()|, ;] {printf("\n%s is Separators\n",yytext);}
+%%
+
+int main()
+{
+        yylex();
+        return 0;
+}
+
+Write a Lex program to show the count of the number of lines in the source program.
+
+%{
+        #include<stdio.h>
+        int nLines=1;
+%}
+
+%%
+\n {nLines++;}
+%%
+
+int yywrap(void)
+{        
+        return 1;
+}
+
+int main()
+{
+        yyin = fopen("abc.txt","r");
+        yylex();
+        printf("\nTotal lines in the File are %d",nLines);
+        return 0;
+}
+
+Write a program to count the number of lines, numbers and blank spaces present in input using LEX.
+
+%{
+        #include<stdio.h>
+        int nlines=1,nnos,sc=0;
+%}
+
+%%
+\n {
+        nlines++;
+}
+([ ])+ sc++;
+[0-9] {nnos++;}
+%%
+
+int yywrap(void)
+{
+        return 1;
+}
+
+int main()
+{
+        yyin= fopen("abc.txt","r");
+        yylex();
+        printf("\nNo. of lines=%d", nlines);
+        printf("\nNo. of spaces=%d", sc);
+        printf("\nNo. of numbers=%d", nnos);
+        return 0;        
+}
+
+Write a Lex program to identify if the expression is valid or not. (Eg. 2+3 is valid expression and 4+ is invalid expression)
+
+%option noyywrap
+%{
+        #include<stdio.h>
+        #include<string.h>
+        int operands_count=0,operators_count=0,valid=1,top=-1,l=0,j=0;
+        char operators[10][10],operands[10][10],stack[100];
+%}
+
+%%
+"(" {
+        top++;
+        stack[top]= '(';
+}
+"[" {
+        top++;
+        stack[top]= '[';
+}
+"{" {
+        top++;
+        stack[top]= '{';
+}
+")" {
+        if(stack[top]!='(')
+        {
+                valid=0;
+        }
+        else if(operands_count>0 && (operands_count-operators_count)!=1)
+        {
+                valid=0;
+        }
+        else
+        {
+                top--;
+                operands_count=1;
+                operators_count=0;
+        }
+}
+"]" {
+        if(stack[top]!='[')
+        {
+                valid=0;
+        }
+        else if(operands_count>0 && (operands_count-operators_count)!=1)
+        {
+                valid=0;
+        }
+        else
+        {
+                top--;
+                operands_count=1;
+                operators_count=0;
+        }
+}
+"}" {
+        if(stack[top]!='{')
+        {
+                valid=0;
+        }
+        else if(operands_count>0 && (operands_count-operators_count)!=1)
+        {
+                valid=0;
+        }
+        else
+        {
+                top--;
+                operands_count=1;
+                operators_count=0;
+        }
+}
+"+"|"-"|"/"|"*" {
+        operators_count++;
+        strcpy(operators[l], yytext);
+        l++;
+}
+[0-9]+|[a-zA-Z][a-zA-Z0-9_]* {
+        operands_count++;
+        strcpy(operands[j], yytext);
+        j++;
+}
+%
+int main()
+{
+        printf("Enter the arithmetic expression: ");
+        yylex();
+        if(valid==1 && top==-1)
+        {
+                printf("\nValid Expression\n");
+        }
+        else
+        {
+                printf("\nInvalid Expression\n");
+        }
+        return 0;
+}
+
+Write a lex program to identify all the keywords (if, else, while etc.)
+
+%option noyywrap
+%{
+        #include<stdio.h>
+        int n=0;
+%}
+
+%%
+["while"|"if"|"else"|"elseif"]*  {printf("Valid Keyword");}
+^[^("while")|^("if")|^("else")|^("elseif")]*  {printf("InValid Keyword");break;}
+%%
+
+int main()
+{
+        printf("Enter a word to check if it is a valid keyword: ");
+        yylex();
+        return 0;
+}
+
+Write a Lex program to count the number of tokens with uppercase characters.
+
+%option noyywrap
+%{
+#include<stdio.h>
+int UC=0, LC=0;
+%}
+%%
+[A-Z] {UC++;}
+[a-z] {LC++;}
+\n printf("Uppercase Characters = %d \nLowercase = %d",UC,LC);
+%%
+int main(void)
+{
+printf("Enter string: ");
+yylex();
+return 0;
+}
